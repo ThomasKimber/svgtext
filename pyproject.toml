@@ -1,0 +1,11 @@
+[project]
+name = "svgtext"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fonttools>=4.65.0",
+    "pandas>=3.0.6",
+    "pillow>=12.3.0",
+]
