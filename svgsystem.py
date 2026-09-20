@@ -8,6 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 import textlayout
 from fontTools import ttLib
 from pandas import DataFrame
+from itertools import starmap
 
 def encode_data_to_base64_uri(font_file_loc):
     with open(font_file_loc, "rb") as font_file:
@@ -37,9 +38,13 @@ class SVGFontRegistry:
     def css_style(self)->str:
         # Emit style-formatted css code that encodes the fonts for wider use
         font_style=[]
-        for font_name, style in [(n,f.css_font_style_string()) for n,f in self.registry.items()]:
+        font_class_defs=[]
+        for font_name, style, font_class_def in [(n,f.css_font_style_string(), f.css_class_string()) for n,f in self.registry.items()]:
             font_style.append(style)
-        return "\n".join(font_style)
+            font_class_defs.append(font_class_def)
+        
+        return "\n".join(font_style) + "\n".join(font_class_defs)
+
 
 class SVGFont:
     font_file_loc : str
@@ -48,6 +53,7 @@ class SVGFont:
     def __init__(self, font_file_loc, font_family_name):
         self.font_file_loc=font_file_loc
         self.font_family_name=font_family_name
+        self.font_class_name=f"font_{self.font_family_name.lower().replace(" ", "_")}"
 
     def css_font_style_string(self)->str:
 
@@ -55,7 +61,9 @@ class SVGFont:
                 font-family:'{self.font_family_name}';
                 src:url({encode_data_to_base64_uri(self.font_file_loc)}) format('truetype');
                 }}
-        """    
+        """
+    def css_class_string(self)->str:
+        return f""".{self.font_class_name}{{font-family:'{self.font_family_name}';}}\n"""
 
     def getImageFont(self, fontsize)->ImageFont:
         return ImageFont.truetype(self.font_file_loc, fontsize)
@@ -103,6 +111,12 @@ class SVGTransformMatrix(SVGElement):
         y1 = (self.skew_x * x) + (self.scale_y * y) + self.translate_y
         return x1, y1
 
+    @classmethod
+    def to_location(cls, 
+                    location : tuple[float, float]):
+        x,y=location
+        return SVGTransformMatrix(1, 0, 0, 1, x, y)
+    
     @classmethod
     def from_bounds(cls, 
                     source_bounds, 
@@ -169,6 +183,7 @@ class SVGMultiLineText(SVGElement):
                          {
             "x" : 0, 
             "y" : 0,
+            "style" : f"""font-family: {font.font_family_name}; font-size: {fontsize};""",
         }, **kwarg_filter(kwargs, {"style_class"})}
         self.layout=textlayout.TextMultiLine((0,0), text, linespace, font.getImageFont(fontsize))
         # Adjust bounds for text-height
@@ -181,35 +196,43 @@ class SVGMultiLineText(SVGElement):
             optional_title=""
         self.content=optional_title + self.layout._svg_stub(**kwargs)
 
-class SVGGridLayout(SVGElement):
+class SVGDataGridLayout(SVGElement):
     def __init__(self,
                  frame : DataFrame, 
-                 column_parameters : dict, 
-                 width_constraint : int | None, 
-                 height_constraint : int | None, 
-                 font : SVGFont, 
-                 fontsize : int,
-                 style_class : str):
+                 column_parameters : dict,
+                 show_headers: bool,
+                 headerfont: SVGFont, 
+                 headerfontsize: int, 
+                 datafont : SVGFont, 
+                 datafontsize : int,
+                 row_column_padding : tuple[int, int]):
+
+        self.attributes={}
         self.element="g"
+        if show_headers:
+            header_row_adj=1
+        else:
+            header_row_adj=0
         self.row_count = len(frame)
         self.columns = frame.columns
         self.column_count = len(self.columns)
-        cell_width = 1 / self.column_count
-        cell_height = 1 / self.row_count
         max_row_height={}
         max_col_width={}
         rows=[]
-        for r in range(0,self.row_count):
-            max_row_height[r]=0
-            cells=[]
+        cells=[]
+        if show_headers:
+            r=0
+
             for c in range(0,self.column_count):
+                if r not in max_row_height.keys():
+                    max_row_height[r]=0
                 if c not in max_col_width.keys(): # i.e. it's the first loop around (r=0)
                     max_col_width[c]=0
-                data = "\n".join(textlayout.word_wrap(str(frame.iloc[r,c]),35, " "))
-                tx = cell_width * c
-                ty = cell_height * r
+                data = "\n".join(textlayout.word_wrap(str(frame.columns[c]),35, " "))
+                font=headerfont
+                fontsize=headerfontsize
                 linespace=1.0
-                cell_content = SVGMultiLineText(data, linespace, font, fontsize, style_class=style_class)
+                cell_content = SVGMultiLineText(data, linespace, font, fontsize)
                 content_bounds = cell_content.bounds
                 bounds_width=content_bounds[2]-content_bounds[0]
                 bounds_height=content_bounds[3]-content_bounds[1]
@@ -222,35 +245,83 @@ class SVGGridLayout(SVGElement):
                 cells.append((cell_content, content_bounds,None))
             rows.append(cells)
 
-        layout_width = sum(max_col_width.values())
-        layout_height = sum(max_row_height.values())
+        for r in range(0,self.row_count):
+            if r+header_row_adj not in max_row_height.keys():
+                max_row_height[r+header_row_adj]=0
+            cells=[]
+            for c in range(0,self.column_count):
+                if c not in max_col_width.keys(): # i.e. it's the first loop around (r=0)
+                    max_col_width[c]=0
+                data = "\n".join(textlayout.word_wrap(str(frame.iloc[r,c]),35, " "))
+                font=datafont
+                fontsize=datafontsize
+                linespace=1.0
+                cell_content = SVGMultiLineText(data, linespace, font, fontsize)
+                content_bounds = cell_content.bounds
+                bounds_width=content_bounds[2]-content_bounds[0]
+                bounds_height=content_bounds[3]-content_bounds[1]
+                if bounds_width>max_col_width[c]:
+                    max_col_width[c]=bounds_width
+                if bounds_height>max_row_height[r+header_row_adj]:
+                    max_row_height[r+header_row_adj]=bounds_height
+        # The width of each column is equal to the width of the widest cell in that column, and the height of
+        # each row is equal to the tallest cell in each row. 
+                cells.append((cell_content, content_bounds,None))
+            rows.append(cells)
+
+        row_padding, column_padding = row_column_padding
+        self.bounds = (0,
+                       0,
+                       sum(max_col_width.values())+(column_padding * (self.column_count-1)), 
+                       sum(max_row_height.values())+(row_padding * (self.row_count-1)))
+        
+        full_width = self.bounds[2]-self.bounds[0]
+        full_height = self.bounds[3]-self.bounds[1]
+        row_padding = row_padding/full_width
+        column_padding = column_padding/full_height
 
         row_loc=0
-        for r in range(0,self.row_count):
+        for r in range(0,self.row_count+header_row_adj):
             col_loc=0
             for c in range(0,self.column_count):
-                cell_width=max_col_width[c]/layout_width
-                cell_height=max_row_height[r]/layout_height
+                cell_width=max_col_width[c]/self.bounds[2]
+                cell_height=max_row_height[r]/self.bounds[3]
 
-                content, bounds, transform = rows[r][c]
+                content, cell_bounds, transform = rows[r][c]
 
-                natural_width = (bounds[2]-bounds[0])/layout_width
-                natural_height=(bounds[3]-bounds[1])/layout_height
+                natural_width = (cell_bounds[2]-cell_bounds[0])/self.bounds[2]
+                natural_height=(cell_bounds[3]-cell_bounds[1])/self.bounds[3]
                 
                 cell_transform_group = SVGTransformMatrix.from_bounds(                        
-                    bounds, 
-                    (col_loc*width_constraint,
-                     row_loc*height_constraint,
-                     (col_loc+natural_width)*width_constraint,
-                     (row_loc+natural_height)*height_constraint))
-                rows[r][c]=(content, bounds,cell_transform_group)
+                    cell_bounds, 
+                    (col_loc*full_width,
+                     row_loc*full_height,
+                     (col_loc+natural_width)*full_width,
+                     (row_loc+natural_height)*full_height))
+                transformed_bounds=[v for q in (starmap(cell_transform_group._apply, 
+                                                        [(x,y) for x,y in zip(cell_bounds[::2], cell_bounds[1::2])])) 
+                                                        for v in q]
 
-                col_loc=col_loc+cell_width
+                rows[r][c]=(content, cell_bounds, cell_transform_group, transformed_bounds)
 
-            row_loc=row_loc+cell_height
+                col_loc=col_loc+cell_width+column_padding
 
+            row_loc=row_loc+cell_height+row_padding
 
+        b_br_x, b_br_y = 0,0
+        for r in range(0,self.row_count+header_row_adj):
+            for c in range(0,self.column_count):
+                _,_,_,t_bounds=rows[r][c]
+                if t_bounds[2]>b_br_x:
+                    b_br_x=t_bounds[2]
+                if t_bounds[3]>b_br_y:
+                    b_br_y=t_bounds[3]
+        self.bounds = (0,0,b_br_x,b_br_y)
         self.cells=[cel for row in rows for cel in row]
+        grid_c=[]
+        for cell,bounds,transform,transformed_bounds in self.cells:
+            grid_c.append(str(transform).replace("%%placeholder%%", str(cell)))
+        self.content = "\n".join([gc for gc in grid_c])
 
 
 class SVGLine(SVGElement):
@@ -338,7 +409,7 @@ class SVGDebugLayoutGrid(SVGElement):
                  gridcolour : str,
                  grid_x_range_partitions : tuple[int, int, int],
                  grid_y_range_partitions : tuple[int, int, int],
-                 axes_font_family : str, 
+                 axes_font: SVGFont, 
                  axes_font_size : str,
                  margins : Margins,
                  **kwargs
