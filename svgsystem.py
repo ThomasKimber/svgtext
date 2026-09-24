@@ -82,6 +82,16 @@ class SVGElement:
         self.attributes = attributes
         self.content = "%%placeholder%%"        
 
+
+    @property
+    def width(self):
+        return self.bounds[2]-self.bounds[0]
+
+    @property
+    def height(self):
+        return self.bounds[3]-self.bounds[1]
+
+
     def __str__(self):
         attr_string = " ".join([f"{k}=\"{v}\"" for k,v in self.attributes.items()])
         return f"<{self.element} {attr_string}>{self.content}</{self.element}>"
@@ -363,13 +373,79 @@ class SVGRectangle(SVGElement):
 
         self.content=""
 
+class SVGTitledPanelFromContent(SVGElement):
+    """Defines a panel with a title-bar located at the top and contents provided by some SVGElement"""
+    def __init__(self, 
+                 identifier : str, 
+                 title_text : str, 
+                 title_font : SVGFont,
+                 title_font_size : int, 
+                 content_element : SVGElement,
+                 corner_radii : tuple[int, int, int, int],
+                 content_margins : tuple[int, int, int, int],
+                 **kwargs
+                 ):
+        # Collate information necessary for sizing the panel
+        # Note that in this form, the content (and title) 100% determine the final panel's size
+        # There may be other generation methods where the panel dimensions are determined in 
+        # a different way, with the content being resized/scaled to fit - that alternate form
+        # of generation is not currently addressed here.
+        title_text_element = SVGMultiLineText(title_text, 1.0, title_font, title_font_size) # n.b. consider hover/title text and/or a-href information
+        f_ascent, f_descent=title_font.getImageFont(title_font_size).getmetrics()
+        min_width=max([content_element.width+ sum([content_margins[0], content_margins[2]]), title_text_element.width])
+        min_height=content_element.height + title_text_element.height + sum([content_margins[1] , content_margins[3]])
+
+        panel_element = SVGSizedPanelOutline(identifier, 
+                                       width=min_width, 
+                                       height=min_height,
+                                       title_bar_height=title_text_element.height,
+                                       corner_radii=corner_radii,
+                                       kwargs=kwargs
+                                       )
+
+        self.bounds=(0,0,min_width, min_height)
+        self.element="g"
+
+        content_element_transform = SVGTransformMatrix.to_location((content_margins[0], title_text_element.height + content_margins[1]))
+        title_element_transform = SVGTransformMatrix.to_location((0, f_ascent))
+
+        self.content=str(panel_element) + str(title_element_transform).replace("%%placeholder%%",str(title_text_element)) + str(content_element_transform).replace("%%placeholder%%", str(content_element))
+        
+        self.attributes={**{
+            "id" : identifier
+            }, **kwarg_filter(kwargs, {"style_class"})}
+
+
+        
+class SVGSizedPanelOutline(SVGElement):
+    def __init__(
+            self,
+                identifier : str, 
+                width : int, 
+                height: int, 
+                title_bar_height : int,
+                corner_radii: tuple[int, int, int, int],
+                **kwargs):
+        self.element="g"
+        tlr,trr,brr,blr=tuple([min([v,title_bar_height]) for v in corner_radii])
+        x,y=(0,0)
+        title_path = f"M {x} {y+(title_bar_height)} L {x} {y+tlr} Q {x} {y} {x+tlr} {y} L {x+width-trr} {y} Q {x+width} {y} {x+width} {y+trr} L {width+x} {y+title_bar_height} Z"
+        canvas_path = f"M {x+width} {y+title_bar_height} L {x+width} {y+height-brr} Q {x+width} {y+height} {x+width-brr} {y+height} L {x+blr} {y+height} Q {x} {y+height} {x} {y+height-blr} L {x} {y+title_bar_height} Z"    
+        self.content=f"""<path d="{title_path}" stroke="black" stroke-width="1px" fill="pink" opacity="1.00" />""" +\
+        f"""<path d="{canvas_path}" stroke="black" stroke-width="1px" fill="white" opacity="1.00" />"""
+
+        self.attributes={**{
+            "id" : identifier
+            }, **kwarg_filter(kwargs, {"style_class"})}
+
+
 class SVGTitledPanel(SVGElement):
-    """Defines a panel with a title-bar located at the top"""
+    """Defines a panel with a title-bar located at the top - old version with tricky scaling"""
     def __init__(self, 
                  identifier : str, 
                  width : int, 
                  height: int, 
-                 text: int, 
+                 text: str, 
                  corner_radii: tuple[int, int, int, int],
                  font : SVGFont,
                  **kwargs):
