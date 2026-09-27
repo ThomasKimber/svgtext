@@ -380,6 +380,7 @@ class SVGTitledPanelFromContent(SVGElement):
                  title_text : str, 
                  title_font : SVGFont,
                  title_font_size : int, 
+                 title_margins : tuple[int, int, int, int],
                  content_element : SVGElement,
                  corner_radii : tuple[int, int, int, int],
                  content_margins : tuple[int, int, int, int],
@@ -392,13 +393,13 @@ class SVGTitledPanelFromContent(SVGElement):
         # of generation is not currently addressed here.
         title_text_element = SVGMultiLineText(title_text, 1.0, title_font, title_font_size) # n.b. consider hover/title text and/or a-href information
         f_ascent, f_descent=title_font.getImageFont(title_font_size).getmetrics()
-        min_width=max([content_element.width+ sum([content_margins[0], content_margins[2]]), title_text_element.width])
-        min_height=content_element.height + title_text_element.height + sum([content_margins[1] , content_margins[3]])
+        min_width=max([content_element.width+ sum([content_margins[0], content_margins[2]]), (title_text_element.width + sum([title_margins[0], title_margins[2]]))])
+        min_height=content_element.height + title_text_element.height + sum([content_margins[1] , content_margins[3]]) + sum([title_margins[1], title_margins[3]])
 
         panel_element = SVGSizedPanelOutline(identifier, 
                                        width=min_width, 
                                        height=min_height,
-                                       title_bar_height=title_text_element.height,
+                                       title_bar_height=title_text_element.height+ sum([title_margins[1], title_margins[3]]),
                                        corner_radii=corner_radii,
                                        kwargs=kwargs
                                        )
@@ -406,8 +407,8 @@ class SVGTitledPanelFromContent(SVGElement):
         self.bounds=(0,0,min_width, min_height)
         self.element="g"
 
-        content_element_transform = SVGTransformMatrix.to_location((content_margins[0], title_text_element.height + content_margins[1]))
-        title_element_transform = SVGTransformMatrix.to_location((0, f_ascent))
+        content_element_transform = SVGTransformMatrix.to_location((content_margins[0], title_text_element.height + content_margins[1]+ sum([title_margins[1], title_margins[3]])))
+        title_element_transform = SVGTransformMatrix.to_location((title_margins[0], f_ascent+title_margins[1]))
 
         self.content=str(panel_element) + str(title_element_transform).replace("%%placeholder%%",str(title_text_element)) + str(content_element_transform).replace("%%placeholder%%", str(content_element))
         

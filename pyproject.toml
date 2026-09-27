@@ -8,4 +8,8 @@ dependencies = [
     "fonttools>=4.65.0",
     "pandas>=3.0.6",
     "pillow>=12.3.0",
+    "tpipe",
 ]
+
+[tool.uv.sources]
+tpipe = { git = "https://github.com/ThomasKimber/tpipe.git" }

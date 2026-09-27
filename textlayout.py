@@ -69,6 +69,9 @@ class TextMultiLine(DrawComponent):
 
         sample_t = TextLine(pos, "Hg", font)
 
+        # Simple placement of textlines one atop one another based on
+        # line height and linespace parameters - left-aligned, only y-pos calculated from 
+        # line sequence
         self.text_lines = [TextLine((pos[0],pos[1]+(sample_t.lineheight*e*linespace)), 
                           t, 
                           font) for e,t in enumerate(text.split("\n"))]
