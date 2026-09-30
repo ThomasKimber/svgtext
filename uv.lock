@@ -1067,7 +1067,7 @@ wheels = [
 [[package]]
 name = "tpipe"
 version = "0.1.0"
-source = { git = "https://github.com/ThomasKimber/tpipe.git#25fb47f51e856fe0f9352a8d4716eec9e3cec628" }
+source = { git = "https://github.com/ThomasKimber/tpipe.git#097b522b26e66a003672ae4884e91456567df30b" }
 dependencies = [
     { name = "lxml" },
     { name = "matplotlib" },

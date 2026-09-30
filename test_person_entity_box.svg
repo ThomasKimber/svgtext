@@ -26,36 +26,36 @@
  stroke-width:0.5;
  stroke:lightblue;
  fill:none;}
-</style></defs><g id="test"><g id="test"><path d="M 0 20.0 L 0 10 Q 0 0 10 0 L 174.9205994897959 0 Q 174.9205994897959 0 174.9205994897959 0 L 174.9205994897959 20.0 Z" stroke="black" stroke-width="1px" fill="pink" opacity="1.00" /><path d="M 174.9205994897959 20.0 L 174.9205994897959 116.46678197171637 Q 174.9205994897959 126.46678197171637 164.9205994897959 126.46678197171637 L 0 126.46678197171637 Q 0 126.46678197171637 0 126.46678197171637 L 0 20.0 Z" stroke="black" stroke-width="1px" fill="white" opacity="1.00" /></g><g transform="matrix(1,0,0,1,5,13)"><text x="0" y="0" style="font-family: Comfortaa Regular; font-size: 8;"><tspan x="0" y="0.0" >PersonDetails</tspan></text></g><g transform="matrix(1,0,0,1,5,25.0)"><g ><g transform="matrix(1.0,0,0,1.0,0.0,9.0)"><text x="0" y="0" style="font-family: Manrope ExtraLight; font-size: 8;"><tspan x="0" y="0.0" >name</tspan></text></g>
-<g transform="matrix(1.0,0,0,1.0,50.108737244897966,9.0)"><text x="0" y="0" style="font-family: Manrope ExtraLight; font-size: 8;"><tspan x="0" y="0.0" >description</tspan></text></g>
-<g transform="matrix(1.0,0,0,1.0,138.6705994897959,9.0)"><text x="0" y="0" style="font-family: Manrope ExtraLight; font-size: 8;"><tspan x="0" y="0.0" >domain</tspan></text></g>
-<g transform="matrix(1.0,0,0,0.9999999999999997,0.0,16.63811171024519)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Identifer</tspan></text></g>
-<g transform="matrix(0.9999999999999998,0,0,0.9999999999999998,50.108737244897966,16.63811171024519)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >An identifier that uniquely</tspan>
-<tspan x="0" y="5.0" > identifies a person</tspan></text></g>
-<g transform="matrix(1.0000000000000016,0,0,0.9999999999999997,138.6705994897959,16.63811171024519)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Identifier</tspan></text></g>
-<g transform="matrix(1.0,0,0,0.9999999999999993,0.0,27.276223420490382)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >FirstName</tspan></text></g>
-<g transform="matrix(0.9999999999999998,0,0,1.0000000000000004,50.108737244897966,27.27622342049039)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >The first word of a person's full</tspan>
-<tspan x="0" y="5.0" > given name.</tspan></text></g>
-<g transform="matrix(1.0,0,0,0.9999999999999993,138.6705994897959,27.276223420490382)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Name</tspan></text></g>
-<g transform="matrix(1.0000000000000002,0,0,1.0,0.0,37.91433513073558)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >FamilyName</tspan></text></g>
-<g transform="matrix(0.9999999999999998,0,0,1.0,50.108737244897966,37.91433513073558)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >The word of a person's full given</tspan>
-<tspan x="0" y="5.0" > name that is shared by members of</tspan>
-<tspan x="0" y="10.0" > their family.</tspan></text></g>
-<g transform="matrix(1.0,0,0,1.0,138.6705994897959,37.91433513073558)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Name</tspan></text></g>
-<g transform="matrix(1.0,0,0,1.0000000000000013,0.0,53.552446840980785)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >ColourPreference</tspan></text></g>
-<g transform="matrix(1.0,0,0,1.0,50.108737244897966,53.55244684098078)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >A colour expressed by a person as</tspan>
-<tspan x="0" y="5.0" > being their preference or</tspan>
-<tspan x="0" y="10.0" > "favourite".</tspan></text></g>
-<g transform="matrix(1.0000000000000024,0,0,1.0000000000000013,138.6705994897959,53.552446840980785)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >String</tspan></text></g>
-<g transform="matrix(1.0,0,0,0.9999999999999971,0.0,69.19055855122596)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >EmailAddress</tspan></text></g>
-<g transform="matrix(1.0,0,0,1.0,50.108737244897966,69.19055855122598)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >An email address by which a person</tspan>
-<tspan x="0" y="5.0" > can be contacted.</tspan></text></g>
-<g transform="matrix(1.0000000000000027,0,0,0.9999999999999971,138.6705994897959,69.19055855122596)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Email</tspan></text></g>
-<g transform="matrix(0.9999999999999999,0,0,1.0,0.0,79.82867026147117)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >URL</tspan></text></g>
-<g transform="matrix(1.0,0,0,1.0,50.108737244897966,79.82867026147117)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >A URL referencing web-content</tspan>
-<tspan x="0" y="5.0" > operated by a person.</tspan></text></g>
-<g transform="matrix(1.0000000000000024,0,0,1.0,138.6705994897959,79.82867026147117)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >String</tspan></text></g>
-<g transform="matrix(1.0,0,0,0.9999999999999971,0.0,90.46678197171636)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >AddressIdentifier</tspan></text></g>
-<g transform="matrix(1.0,0,0,1.0,50.108737244897966,90.46678197171637)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Reference to the Local record at</tspan>
-<tspan x="0" y="5.0" > which this person resides.</tspan></text></g>
-<g transform="matrix(1.0000000000000016,0,0,0.9999999999999971,138.6705994897959,90.46678197171636)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Identifier</tspan></text></g></g></g></g></svg>
+</style></defs><g id="test"><g id="test"><path d="M 0 20.0 L 0 10 Q 0 0 10 0 L 175.7860331632653 0 Q 175.7860331632653 0 175.7860331632653 0 L 175.7860331632653 20.0 Z" stroke="black" stroke-width="1px" fill="pink" opacity="1.00" /><path d="M 175.7860331632653 20.0 L 175.7860331632653 116.4459746835443 Q 175.7860331632653 126.4459746835443 165.7860331632653 126.4459746835443 L 0 126.4459746835443 Q 0 126.4459746835443 0 126.4459746835443 L 0 20.0 Z" stroke="black" stroke-width="1px" fill="white" opacity="1.00" /></g><g transform="matrix(1,0,0,1,5,13)"><text x="0" y="0" style="font-family: Comfortaa Regular; font-size: 8;"><tspan x="0" y="0.0" >PersonDetails</tspan></text></g><g transform="matrix(1,0,0,1,5,25.0)"><g ><g transform="matrix(1.0,0,0,1.0,0.0,9.0)"><text x="0" y="0" style="font-family: Manrope ExtraLight; font-size: 8;"><tspan x="0" y="0.0" >name</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0,50.18207908163265,9.0)"><text x="0" y="0" style="font-family: Manrope ExtraLight; font-size: 8;"><tspan x="0" y="0.0" >description</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0,139.5360331632653,9.0)"><text x="0" y="0" style="font-family: Manrope ExtraLight; font-size: 8;"><tspan x="0" y="0.0" >domain</tspan></text></g>
+<g transform="matrix(1.0,0,0,0.9999999999999997,0.0,16.635139240506327)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Identifer</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0000000000000002,50.18207908163265,16.63513924050633)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >An identifier that uniquely </tspan>
+<tspan x="0" y="5.0" >identifies a person</tspan></text></g>
+<g transform="matrix(1.0,0,0,0.9999999999999997,139.5360331632653,16.635139240506327)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Identifier</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0000000000000007,0.0,27.27027848101266)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >FirstName</tspan></text></g>
+<g transform="matrix(1.0,0,0,0.9999999999999997,50.18207908163265,27.270278481012657)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >The first word of a person's full </tspan>
+<tspan x="0" y="5.0" >given name.</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0000000000000007,139.5360331632653,27.27027848101266)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Name</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0,0.0,37.90541772151899)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >FamilyName</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0,50.18207908163265,37.90541772151899)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >The word of a person's full given </tspan>
+<tspan x="0" y="5.0" >name that is shared by members of </tspan>
+<tspan x="0" y="10.0" >their family.</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0,139.5360331632653,37.90541772151899)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Name</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0000000000000013,0.0,53.54055696202532)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >ColourPreference</tspan></text></g>
+<g transform="matrix(1.0,0,0,0.9999999999999996,50.18207908163265,53.54055696202531)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >A colour expressed by a person as </tspan>
+<tspan x="0" y="5.0" >being their preference or </tspan>
+<tspan x="0" y="10.0" >"favourite".</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0000000000000013,139.5360331632653,53.54055696202532)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >String</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0,0.0,69.17569620253164)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >EmailAddress</tspan></text></g>
+<g transform="matrix(0.9999999999999998,0,0,1.0,50.18207908163265,69.17569620253164)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >An email address by which a person </tspan>
+<tspan x="0" y="5.0" >can be contacted.</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0,139.5360331632653,69.17569620253164)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Email</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0,0.0,79.81083544303797)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >URL</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0,50.18207908163265,79.81083544303797)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >A URL referencing web-content </tspan>
+<tspan x="0" y="5.0" >operated by a person.</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0,139.5360331632653,79.81083544303797)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >String</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0,0.0,90.4459746835443)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >AddressIdentifier</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0,50.18207908163265,90.4459746835443)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Reference to the Local record at </tspan>
+<tspan x="0" y="5.0" >which this person resides.</tspan></text></g>
+<g transform="matrix(1.0,0,0,1.0,139.5360331632653,90.4459746835443)"><text x="0" y="0" style="font-family: DejaVu Sans; font-size: 4;"><tspan x="0" y="0.0" >Identifier</tspan></text></g></g></g></g></svg>

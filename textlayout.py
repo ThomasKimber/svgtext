@@ -5,39 +5,37 @@ from dataclasses import dataclass
 from abc import ABC, abstractmethod
 
 
-
-
-def word_wrap(line : str, 
-              target : int, 
-              bchars : str) -> list[str]:
-    """Convert input text and a target char
-    count into a list of shortened text lines
-    favouring break-points where a character
-    matches any of the chars provided in bchars"""
+def word_wrap(text_block : str, 
+                        max_target_length : int, 
+                        favoured_break_chars : str
+                       ) -> list[str]:
+    """Reading in text-blocks, and instering line-breaks into those
+    blocks where the cumulative line-length exceeds some target. 
+    It's possible that a series of blocks will be fed, requiring
+    some cumulative line-length calculation to be managed."""
     linebreaks=[]
     lines=[]
-    progress=0
-    while len(line.strip())>0:
+    last_cut=0
+    while len(text_block[last_cut:].strip())>0:
         scores={}
-        for e,c in enumerate(line):
-            progress=e
-            if c in bchars:
-                adj=1
+        for e,c in enumerate(text_block[last_cut:]):
+            if c in favoured_break_chars:
+                adj=1.5
             else:
                 adj=0
-            if e<target:
+            if e<max_target_length:
                 scores[e]=log(e+1)+adj
             else:
                 scores[e]=0
                 break
         if scores[e]==0:
-            best=sorted([(k,v) for k,v in scores.items()], key=lambda x:x[1], reverse=True)[0]
-            print(best, progress)
+            best=sorted([(k,v) for k,v in scores.items()], key=lambda x:x[1], reverse=True)[0][0]
+            #print(e, scores.values())
         else:
-            best=[len(line),0]
-        linebreaks.append(best[0])
-        lines.append(line[:best[0]])
-        line=line[best[0]:]
+            best=len(text_block[last_cut:])
+        
+        lines.append([last_cut,last_cut+best+1])
+        last_cut = last_cut+best+1
     return lines
 
 

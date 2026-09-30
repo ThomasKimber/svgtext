@@ -238,7 +238,7 @@ class SVGDataGridLayout(SVGElement):
                     max_row_height[r]=0
                 if c not in max_col_width.keys(): # i.e. it's the first loop around (r=0)
                     max_col_width[c]=0
-                data = "\n".join(textlayout.word_wrap(str(frame.columns[c]),35, " "))
+                data = "\n".join([str(frame.columns[c])[slice(*ww)] for ww in textlayout.word_wrap(str(frame.columns[c]),35, " ")])
                 font=headerfont
                 fontsize=headerfontsize
                 linespace=1.0
@@ -262,7 +262,7 @@ class SVGDataGridLayout(SVGElement):
             for c in range(0,self.column_count):
                 if c not in max_col_width.keys(): # i.e. it's the first loop around (r=0)
                     max_col_width[c]=0
-                data = "\n".join(textlayout.word_wrap(str(frame.iloc[r,c]),35, " "))
+                data = "\n".join([str(frame.iloc[r,c])[slice(*ww)] for ww in textlayout.word_wrap(str(frame.iloc[r,c]),35, " ")])
                 font=datafont
                 fontsize=datafontsize
                 linespace=1.0
