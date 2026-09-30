@@ -105,7 +105,7 @@ def get_text_feature_from_graph_hierarchy(graph, node):
         "b" : {},
         "i" : {}
     }
-    print(node, ancestors)
+
     for a in ancestors:
         a_node = graph.nodes(data=True)[a]
         attribute_map = tag_mapping.get(a_node['data'].tag, None)
