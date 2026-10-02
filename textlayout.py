@@ -53,8 +53,72 @@ class DrawComponent(ABC):
         a pillow drawing_object's context"""
         return NotImplemented
 
+class TextMultiSpan(DrawComponent):
+    def __init__(self, 
+                pos : tuple[int, int],
+                span_markup : list[list[tuple[str,dict[dict]]]],
+                linespace : int,
+                font : ImageFont):
+        self.pos=pos
+        self.font=font
+        sample_t = TextSpan(pos, "Hg", font)
+        positions=[]
+        
+        x_position=pos[0]
+        self.text_spans=[]
+        for r,row_c in enumerate(span_markup):
+            positions.append([])
+            y_position=pos[1]+(sample_t.lineheight*r*linespace)
+            last_bb = (0,0,0,0)
+            for c,cel_c in enumerate(row_c):
+                x_position=last_bb[2]
+                cel_text, cel_style_d = cel_c
+                cel_text=cel_text.replace("\n","")
+                positions[r].append([])
+                # Position values to be stored as (x,y) tuples
+                t_span=TextSpan((x_position,y_position), cel_text, font, cel_style_d)
+                self.text_spans.append(
+                    t_span
+                )
+                last_bb=t_span._bounds()
+        self.bounds=self._bounds()
+        left, top, right, bottom = self.bounds
+        self.width=right-left
+        self.height=bottom-top
+        self.aspect_ratio=self.width/self.height
+
+    def _bounds(self):
+        all_bounds = [tl._bounds() for tl in self.text_spans]
+        x0,y0=min([b[0] for b in all_bounds]), min([b[1] for b in all_bounds])
+        x1,y1=max([b[2] for b in all_bounds]), max([b[3] for b in all_bounds])
+        return x0,y0,x1,y1
+
+    def _svg_stub(self, **kwargs):
+        spans=[span._svg_stub(**kwargs) for span in self.text_spans]
+        return "\n".join(spans)
+
+    
+    def _pillow_draw(self, drawing_object, **kwargs):
+            
+        if 'block' in kwargs.keys():
+            bounds=self._bounds()
+            drawing_object.rectangle(
+                [*bounds],
+                outline=kwargs['block'],
+                width=1,
+                fill=kwargs['block']
+            )
+
+        scale_x, scale_y = 100/self.width, 100/self.height
+        
+        for tl in self.text_lines:
+            tl._pillow_draw(drawing_object)
+
+
 
 class TextMultiLine(DrawComponent):
+    """Accepts raw text, splits it based on \n characters and 
+    models the result."""
 
     def __init__(self, 
                  pos : tuple[int, int],
@@ -65,12 +129,12 @@ class TextMultiLine(DrawComponent):
         self.text=text
         self.font=font
 
-        sample_t = TextLine(pos, "Hg", font)
+        sample_t = TextSpan(pos, "Hg", font)
 
         # Simple placement of textlines one atop one another based on
         # line height and linespace parameters - left-aligned, only y-pos calculated from 
         # line sequence
-        self.text_lines = [TextLine((pos[0],pos[1]+(sample_t.lineheight*e*linespace)), 
+        self.text_lines = [TextSpan((pos[0],pos[1]+(sample_t.lineheight*e*linespace)), 
                           t, 
                           font) for e,t in enumerate(text.split("\n"))]
 
@@ -108,32 +172,94 @@ class TextMultiLine(DrawComponent):
             tl._pillow_draw(drawing_object)
 
 
-class TextLine(DrawComponent):
+class TextSpan(DrawComponent):
     
     def __init__(self, 
                  pos : tuple[int, int],
                  text : str,
-                 font : ImageFont) :
+                 font : ImageFont, 
+                 style_dict : dict[str,dict] | None = None) :
         self.pos=pos
         self.text=text
         self.font=font
+
+        self.is_bold = False
+        self.is_italic = False
+        self.is_link = False
+        self.is_super = False
+        self.is_sub = False
+
         self.bounds=self._bounds()
         left, top, right, bottom = self.bounds
         self.lineheight = bottom - top
         self.width=right-left
         self.height=bottom-top
         self.aspect_ratio=self.width/self.height
-        
+
+
+        if style_dict is not None:
+            if "bold" in style_dict.keys():
+                self.is_bold=True
+            if "italic" in style_dict.keys():
+                self.is_italic=True
+            if "link" in style_dict.keys():
+                self.is_link=True
+            if "super" in style_dict.keys():
+                self.is_super=True
+            if "sub" in style_dict.keys():
+                self.is_sub=True
+        self.style_dict=style_dict
 
     def _bounds(self):
         x,y=self.pos
         fm_ascent, fm_descent = self.font.getmetrics()
         font_measure_width = self.font.getlength(self.text)
+        average_char_width = font_measure_width/len(self.text)
+        # Adjust bounds based on style variations
+        if self.is_bold or self.is_italic:
+            font_measure_width=font_measure_width + (0.7 * average_char_width) # Naieve adjustment - needs better method
+
         return (x, y-fm_ascent, x+font_measure_width, y+fm_descent)
 
     def _svg_stub(self, **kwargs):
         x,y=self.pos
-        return f"""<tspan x="{x}" y="{y}" >{self.text}</tspan>"""
+        extra_styles=""
+        # Optional Bold/Italic Styling
+        for extra in ['is_italic', 'is_bold']:
+            if getattr(self, extra):
+                if extra=="is_italic":
+                    extra_styles=" ".join([extra_styles, "font-style=\"italic\""])
+                if extra=="is_bold":
+                    extra_styles=" ".join([extra_styles, "font-weight=\"bold\""])
+        for extra in ['is_super', 'is_sub']:
+            if getattr(self, extra):
+                if extra=="is_super":
+                    extra_styles=" ".join([extra_styles, "baseline-shift=\"super\""])
+                if extra=="is_sub":
+                    extra_styles=" ".join([extra_styles, "baseline-shift=\"sub\""])
+
+
+        # Optional Link Wrapping
+        link_wrapper_open=""
+        link_wrapper_close=""
+        if self.is_link:
+            link_d = self.style_dict.get("link")
+            title=link_d.get("title")
+            target=link_d.get("target")
+            link_title = f"title=\"{title}\""
+            link_target=f"target=\"{target}\""
+            if title is None:
+                link_title=""
+            if target is None:
+                link_target=""
+
+            link_wrapper_open="".join([f"<a href=\"{link_d.get("href")}\"" ,
+                                        link_title, 
+                                        link_target,
+                                        ">"])
+            link_wrapper_close="</a>"
+
+        return f"""{link_wrapper_open}<tspan x="{x}" y="{y}"{extra_styles}>{self.text}</tspan>{link_wrapper_close}"""
 
     def _pillow_draw(self, drawing_object, **kwargs):
         if 'anchor' not in kwargs.keys():

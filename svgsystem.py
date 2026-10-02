@@ -206,6 +206,35 @@ class SVGMultiLineText(SVGElement):
             optional_title=""
         self.content=optional_title + self.layout._svg_stub(**kwargs)
 
+
+class SVGMultiSpanText(SVGElement):
+    def __init__(self, 
+                 span_markup : list[list[tuple[str,dict[dict]]]],
+                 linespace : float,
+                 font : SVGFont,
+                 fontsize : int,
+                 **kwargs):
+        self.element='text'
+        self.attributes={**
+                         {
+            "x" : 0, 
+            "y" : 0,
+            "style" : f"""font-family: {font.font_family_name}; font-size: {fontsize};""",
+        }, **kwarg_filter(kwargs, {"style_class"})}
+        self.layout=textlayout.TextMultiSpan((0,0), span_markup, linespace, font.getImageFont(fontsize))
+        # Adjust bounds for text-height
+        tlx,tly,brx,bry=self.layout.bounds
+        self.bounds=tlx,tly,brx,bry
+
+        if "title" in kwargs:
+            optional_title = f"<title>{kwargs.get("title", "")}</title>"
+        else:
+            optional_title=""
+        self.content=optional_title + self.layout._svg_stub(**kwargs)
+
+
+
+
 class SVGDataGridLayout(SVGElement):
     def __init__(self,
                  frame : DataFrame, 

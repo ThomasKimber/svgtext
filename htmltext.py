@@ -1,10 +1,24 @@
-import textlayout
+from textlayout import word_wrap
 from tpipe import phtml
 import networkx as nx
 from networkx import MultiDiGraph
 
 
-def html_section_to_text_layout_grid(html_graph, start_node):
+def html_to_markup(source : str, 
+                   word_wrap_limit : int)->list[list[tuple[str,dict[str,dict]]]]:
+    """Process a section of text, breaking it into 
+    separate lines based on a number of 
+    characters defined as a word_wrap_limit and return
+    a proprietary markup consisting of lines of text
+    broken down into individually styled cells.
+    Text can be supplied as straight text, or provided as html
+    """
+    tgraph=html_text_to_graph(source)
+    return [[(text,_get_text_feature_from_graph_hierarchy(tgraph, node)) for text, node in row ] for row in _html_text_word_wrap(source, tgraph, word_wrap_limit) ]
+
+
+
+def _html_section_to_text_layout_grid(html_graph, start_node):
     """Given an html structural graph (conforming to the definition 
     in phtml) and a starting node, traverse the graph and extract
     text nodes, placing them into a grid based on linebreaks and
@@ -53,13 +67,15 @@ def ranges_intersection(r1, r2):
 def range_to_start_end_tuple(r):
     return r.start, r.stop+1
 
+def html_text_to_graph(source: str) -> nx.MultiDiGraph:
+    return phtml.html_to_graph(source)
 
-def html_text_word_wrap(source : str, 
+def _html_text_word_wrap(source : str, 
                         tgraph : MultiDiGraph,
                         word_wrap_length : int):
-
+    
     root_el=phtml.root_node_id(tgraph)
-    node_line_assignments = html_section_to_text_layout_grid(tgraph, root_el)
+    node_line_assignments = _html_section_to_text_layout_grid(tgraph, root_el)
     
     row_node_extents=[]
     for row in node_line_assignments:
@@ -74,7 +90,7 @@ def html_text_word_wrap(source : str,
     layout_text = ["".join([phtml.get_node_data(tgraph, t).text for t in row_nodes]) for row_nodes in node_line_assignments]
     line_wws=[]
     for line in layout_text:
-        wraps=textlayout.word_wrap(line, word_wrap_length, " .,\n")
+        wraps=word_wrap(line, word_wrap_length, " .,\n")
         line_wws.append(wraps)
 
     layout=[r for l in [
@@ -93,22 +109,29 @@ def html_text_word_wrap(source : str,
       for node_span in span] 
          for span in layout]
 
-def html_to_markup(source, tgraph, word_wrap_limit):
 
-    return [[(text,get_text_feature_from_graph_hierarchy(tgraph, node)) for text, node in row ] for row in html_text_word_wrap(source, tgraph, word_wrap_limit) ]
-
-def get_text_feature_from_graph_hierarchy(graph, node):
+def _get_text_feature_from_graph_hierarchy(graph, node):
     features={}
     ancestors = [a for a in phtml.get_ancestors(graph, node)]
-    tag_mapping={
+    tag_name_mapping={
+        "a" : "link",
+        "b" : "bold",
+        "i" : "italic",
+        "sup" : "super",
+        "sub" : "sub"
+    }
+
+    tag__attribute_mapping={
         "a" : {"href", "title", "target"},
         "b" : {},
-        "i" : {}
+        "i" : {},
+        "sup" : {},
+        "sub" : {}
     }
 
     for a in ancestors:
         a_node = graph.nodes(data=True)[a]
-        attribute_map = tag_mapping.get(a_node['data'].tag, None)
+        attribute_map = tag__attribute_mapping.get(a_node['data'].tag, None)
         if attribute_map is not None :
-            features={**features, **{a_node['data'].tag : {v:a_node['data'].attributes.get(v) for v in attribute_map}}}
+            features={**features, **{tag_name_mapping.get(a_node['data'].tag) : {v:a_node['data'].attributes.get(v) for v in attribute_map}}}
     return features
