@@ -223,7 +223,7 @@ class TextSpan(DrawComponent):
 
     def _svg_stub(self, **kwargs):
         x,y=self.pos
-        extra_styles=""
+        extra_styles="xml:space=\"preserve\""
         # Optional Bold/Italic Styling
         for extra in ['is_italic', 'is_bold']:
             if getattr(self, extra):
@@ -237,6 +237,9 @@ class TextSpan(DrawComponent):
                     extra_styles=" ".join([extra_styles, "baseline-shift=\"super\""])
                 if extra=="is_sub":
                     extra_styles=" ".join([extra_styles, "baseline-shift=\"sub\""])
+        for extra in ['is_link']:
+            if getattr(self, extra):
+                extra_styles=" ".join([extra_styles, "text-decoration=\"underline\""])
 
 
         # Optional Link Wrapping

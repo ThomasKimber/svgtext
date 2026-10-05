@@ -5,7 +5,7 @@ from math import log,sqrt
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from PIL import Image, ImageDraw, ImageFont
-import textlayout
+import textlayout, htmltext
 from fontTools import ttLib
 from pandas import DataFrame
 from itertools import starmap
@@ -272,6 +272,9 @@ class SVGDataGridLayout(SVGElement):
                 fontsize=headerfontsize
                 linespace=1.0
                 cell_content = SVGMultiLineText(data, linespace, font, fontsize)
+                markup = htmltext.html_to_markup(data.replace("\n",""), 35)
+                print(markup)
+                cell_content = SVGMultiSpanText(markup, linespace, font, fontsize)
                 content_bounds = cell_content.bounds
                 bounds_width=content_bounds[2]-content_bounds[0]
                 bounds_height=content_bounds[3]-content_bounds[1]
@@ -296,6 +299,9 @@ class SVGDataGridLayout(SVGElement):
                 fontsize=datafontsize
                 linespace=1.0
                 cell_content = SVGMultiLineText(data, linespace, font, fontsize)
+                markup = htmltext.html_to_markup(data.replace("\n",""), 35)
+                print(markup)
+                cell_content = SVGMultiSpanText(markup, linespace, font, fontsize)
                 content_bounds = cell_content.bounds
                 bounds_width=content_bounds[2]-content_bounds[0]
                 bounds_height=content_bounds[3]-content_bounds[1]
