@@ -256,13 +256,13 @@ class TextSpan(DrawComponent):
             if target is None:
                 link_target=""
 
-            link_wrapper_open="".join([f"<a href=\"{link_d.get("href")}\"" ,
+            link_wrapper_open=" ".join([f"<a href=\"{link_d.get("href")}\"" ,
                                         link_title, 
                                         link_target,
                                         ">"])
             link_wrapper_close="</a>"
 
-        return f"""{link_wrapper_open}<tspan x="{x}" y="{y}"{extra_styles}>{self.text}</tspan>{link_wrapper_close}"""
+        return f"""{link_wrapper_open}<tspan x="{x}" y="{y}" {extra_styles}>{self.text}</tspan>{link_wrapper_close}"""
 
     def _pillow_draw(self, drawing_object, **kwargs):
         if 'anchor' not in kwargs.keys():

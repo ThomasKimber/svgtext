@@ -68,6 +68,24 @@ class SVGFont:
     def getImageFont(self, fontsize)->ImageFont:
         return ImageFont.truetype(self.font_file_loc, fontsize)
 
+class SVGPanelStyle:
+    title_bar_fill : str
+    panel_canvas_fill : str
+    stroke : str
+    stoke_width : str
+    opacity : float
+    
+    def __init__(   self, 
+                    title_bar_fill="white",
+                    panel_canvas_fill="white",
+                    stroke="black",
+                    stroke_width="1px",
+                    opacity=1.0 ):
+        self.title_bar_fill = title_bar_fill 
+        self.panel_canvas_fill = panel_canvas_fill 
+        self.stroke = stroke 
+        self.stroke_width = stroke_width 
+        self.opacity = opacity 
 
 class SVGElement:
     element:str
@@ -221,7 +239,11 @@ class SVGMultiSpanText(SVGElement):
             "y" : 0,
             "style" : f"""font-family: {font.font_family_name}; font-size: {fontsize};""",
         }, **kwarg_filter(kwargs, {"style_class"})}
-        self.layout=textlayout.TextMultiSpan((0,0), span_markup, linespace, font.getImageFont(fontsize))
+
+        x,y = self.attributes.get("x"), self.attributes.get("y")
+        fm_ascent, fm_descent = font.getImageFont(fontsize).getmetrics()
+        top_offset=fm_ascent
+        self.layout=textlayout.TextMultiSpan((x,y+top_offset), span_markup, linespace, font.getImageFont(fontsize))
         # Adjust bounds for text-height
         tlx,tly,brx,bry=self.layout.bounds
         self.bounds=tlx,tly,brx,bry
@@ -231,8 +253,6 @@ class SVGMultiSpanText(SVGElement):
         else:
             optional_title=""
         self.content=optional_title + self.layout._svg_stub(**kwargs)
-
-
 
 
 class SVGDataGridLayout(SVGElement):
@@ -419,7 +439,8 @@ class SVGTitledPanelFromContent(SVGElement):
                  content_element : SVGElement,
                  corner_radii : tuple[int, int, int, int],
                  content_margins : tuple[int, int, int, int],
-                 **kwargs
+                 panel_style : SVGPanelStyle,
+                **kwargs
                  ):
         # Collate information necessary for sizing the panel
         # Note that in this form, the content (and title) 100% determine the final panel's size
@@ -436,6 +457,7 @@ class SVGTitledPanelFromContent(SVGElement):
                                        height=min_height,
                                        title_bar_height=title_text_element.height+ sum([title_margins[1], title_margins[3]]),
                                        corner_radii=corner_radii,
+                                       panel_style=panel_style,
                                        kwargs=kwargs
                                        )
 
@@ -452,7 +474,8 @@ class SVGTitledPanelFromContent(SVGElement):
             }, **kwarg_filter(kwargs, {"style_class"})}
 
 
-        
+
+
 class SVGSizedPanelOutline(SVGElement):
     def __init__(
             self,
@@ -461,49 +484,15 @@ class SVGSizedPanelOutline(SVGElement):
                 height: int, 
                 title_bar_height : int,
                 corner_radii: tuple[int, int, int, int],
+                panel_style : SVGPanelStyle,
                 **kwargs):
         self.element="g"
         tlr,trr,brr,blr=tuple([min([v,title_bar_height]) for v in corner_radii])
         x,y=(0,0)
         title_path = f"M {x} {y+(title_bar_height)} L {x} {y+tlr} Q {x} {y} {x+tlr} {y} L {x+width-trr} {y} Q {x+width} {y} {x+width} {y+trr} L {width+x} {y+title_bar_height} Z"
         canvas_path = f"M {x+width} {y+title_bar_height} L {x+width} {y+height-brr} Q {x+width} {y+height} {x+width-brr} {y+height} L {x+blr} {y+height} Q {x} {y+height} {x} {y+height-blr} L {x} {y+title_bar_height} Z"    
-        self.content=f"""<path d="{title_path}" stroke="black" stroke-width="1px" fill="pink" opacity="1.00" />""" +\
-        f"""<path d="{canvas_path}" stroke="black" stroke-width="1px" fill="white" opacity="1.00" />"""
-
-        self.attributes={**{
-            "id" : identifier
-            }, **kwarg_filter(kwargs, {"style_class"})}
-
-
-class SVGTitledPanel(SVGElement):
-    """Defines a panel with a title-bar located at the top - old version with tricky scaling"""
-    def __init__(self, 
-                 identifier : str, 
-                 width : int, 
-                 height: int, 
-                 text: str, 
-                 corner_radii: tuple[int, int, int, int],
-                 font : SVGFont,
-                 **kwargs):
-
-        x,y=0,0
-        title_bar_height = 16
-        canvas_height = height - 16
-        tlr,trr,brr,blr=tuple([min([v,title_bar_height]) for v in corner_radii])
-        title_path = f"M {x} {y+(title_bar_height)} L {x} {y+tlr} Q {x} {y} {x+tlr} {y} L {x+width-trr} {y} Q {x+width} {y} {x+width} {y+trr} L {width+x} {y+title_bar_height} Z"
-        canvas_path = f"M {x+width} {y+title_bar_height} L {x+width} {y+height-brr} Q {x+width} {y+height} {x+width-brr} {y+height} L {x+blr} {y+height} Q {x} {y+height} {x} {y+height-blr} L {x} {y+title_bar_height} Z"
-        title_text = SVGMultiLineText(text, 1.0, font, 16, **kwargs)
-        f_ascent, f_descent=font.getImageFont(16).getmetrics()
-        f_height = f_ascent + f_descent
-        title_text_aspect_ratio=(title_text.bounds[2]-title_text.bounds[0])/(title_text.bounds[3]-title_text.bounds[1])
-        target_text_bounds=(0+(tlr-sqrt(tlr/2)), 0, width-(trr-sqrt(trr/2)), title_bar_height)
-        target_text_aspect_ratio=(target_text_bounds[2]-target_text_bounds[0])/(target_text_bounds[3]-target_text_bounds[1])
-        print(title_text_aspect_ratio, target_text_aspect_ratio)
-        text_transform = SVGTransformMatrix.from_bounds(title_text.bounds, target_text_bounds)
-        self.element="g"
-        self.content=f"""<path d="{title_path}" stroke="black" stroke-width="1px" fill="pink" opacity="1.00" />""" +\
-        f"""<path d="{canvas_path}" stroke="black" stroke-width="1px" fill="white" opacity="1.00" />""" +\
-        str(text_transform).replace("%%placeholder%%", str(title_text))
+        self.content=f"""<path d="{title_path}" stroke="{panel_style.stroke}" stroke-width="{panel_style.stroke_width}" fill="{panel_style.title_bar_fill}" opacity="{panel_style.opacity}" />""" +\
+        f"""<path d="{canvas_path}" stroke="{panel_style.stroke}" stroke-width="{panel_style.stroke_width}" fill="{panel_style.panel_canvas_fill}" opacity="{panel_style.opacity}" />"""
 
         self.attributes={**{
             "id" : identifier

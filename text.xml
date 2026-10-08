@@ -1,0 +1,97 @@
+<mxfile>
+  <diagram name="test svg to drawio">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="" style="group;" parent="1" vertex="1">
+      <mxGeometry x="36.36" y="72.73" width="744.57" height="454.55" as="geometry"/>
+    </mxCell>
+    <mxCell id="3" value="" style="group;" parent="2" vertex="1">
+      <mxGeometry x="0.00" y="0.00" width="744.57" height="454.55" as="geometry"/>
+    </mxCell>
+    <mxCell id="4" value="" style="shape=stencil(fZLdEoIgEIWfhltG2cq87uc9iCgpEgep7O2TWTTE6sZh95wz+wlLYNNWvJGEZU8CW8JYnmX9t6+rpOZtI4XD5oNbxQ9aotI6a67yqY4uZFRdSatcrGpVS8Eb1E+az8SLUTWqN+Wk9TLsCGwOXFzP1tzrI9YN91P86WYenrvDVEYH0NcIPrT2GPBj/gTYigKL/eJucUI+S4TOmhYFdjo2eNZ58LA01UEYRBeL4IHE85W0LOhyNUFN/SlpWdK8nKJGGGx2QSNs9EPwxQU/bmrKO4n8egyhTSvHqj98HvaktMbFiPV0EfoWri7s3g==);fillColor=pink;strokeColor=black;strokeWidth=1.8181818181818181;opacity=100;fillOpacity=100;strokeOpacity=100;" parent="3" vertex="1">
+      <mxGeometry x="0.00" y="0.00" width="744.57" height="69.09" as="geometry"/>
+    </mxCell>
+    <mxCell id="5" value="" style="shape=stencil(rZJdDoMgEIRPw2ujcARr74GIlYpAEH96+0LWWqu0MU1fyO7MTvZLWESyrqaGI5yMiJwRxmmS+Nf39aanneHMgThQK2ghOTids7rhoyjdnBGq5la4tSuF4owa8CtJd+ZNCwVuKxy3wSY5IllBWXO1ulcl9IaGLaFq9RC4p4Xz9ES9g7QIFwiENV8DK2mOsN7CkjQSimgTjsxFtIlE5sgninfwH7CPQR9D/gPwDlfqji+dL16fXAkp4UjW/vYovARnTPIH);fillColor=white;strokeColor=black;strokeWidth=1.8181818181818181;opacity=100;fillOpacity=100;strokeOpacity=100;" parent="3" vertex="1">
+      <mxGeometry x="0.00" y="69.09" width="744.57" height="385.45" as="geometry"/>
+    </mxCell>
+    <mxCell id="6" value="" style="group;" parent="2" vertex="1">
+      <mxGeometry x="9.09" y="28.69" width="225.00" height="30.00" as="geometry"/>
+    </mxCell>
+    <mxCell id="7" value="Panel Title Bar" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24.0;fontColor=#000000;fontFamily=Comfortaa Regular;opacity=100;fontStyle=0;" parent="6" vertex="1">
+      <mxGeometry x="0.00" y="0.00" width="225.00" height="30.00" as="geometry"/>
+    </mxCell>
+    <mxCell id="8" value="" style="group;" parent="2" vertex="1">
+      <mxGeometry x="9.09" y="86.16" width="613.40" height="341.67" as="geometry"/>
+    </mxCell>
+    <mxCell id="9" value="Rest mass, also called" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="0.00" y="0.00" width="132.86" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="10" value="invariant mass" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=2;" parent="8" vertex="1">
+      <mxGeometry x="248.49" y="0.00" width="88.70" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="11" value=", is a fundamental physical" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="417.84" y="0.00" width="161.70" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="12" value="property of matter," style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="0.00" y="27.27" width="115.19" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="13" value="independent of" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=2;" parent="8" vertex="1">
+      <mxGeometry x="216.36" y="27.27" width="91.28" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="14" value=". Massless particles" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="497.01" y="27.27" width="116.39" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="15" value="such as photons have zero invariant mass, but massless free" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="0.00" y="54.55" width="366.72" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="16" value="particles have both momentum and energy." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="0.00" y="81.82" width="263.61" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="17" value="The" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="0.00" y="109.09" width="22.33" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="18" value="equivalence principle" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=1;" parent="8" vertex="1">
+      <mxGeometry x="47.53" y="109.09" width="144.77" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="19" value="implies that when mass is lost in" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="295.53" y="109.09" width="196.30" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="20" value="chemical reactions or" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="0.00" y="136.36" width="129.05" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="21" value="nuclear reactions" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=2;" parent="8" vertex="1">
+      <mxGeometry x="241.56" y="136.36" width="103.89" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="22" value=", a corresponding amount" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="438.23" y="136.36" width="154.67" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="23" value="of energy will be released. The energy can be released to the" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="0.00" y="163.64" width="369.31" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="24" value="environment (outside of the system being considered) as radiant" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="0.00" y="190.91" width="391.17" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="25" value="energy, such as light, or as thermal energy. The principle is" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="0.00" y="218.18" width="356.22" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="26" value="fundamental" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=3;" parent="8" vertex="1">
+      <mxGeometry x="0.00" y="245.45" width="86.12" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="27" value="to many fields of physics, including nuclear and" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="154.87" y="245.45" width="286.88" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="28" value="particle physics." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="0.00" y="272.73" width="97.66" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="29" value="Some relation between mass and energy was explored in the late" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="0.00" y="300.00" width="394.95" height="14.40" as="geometry"/>
+    </mxCell>
+    <mxCell id="30" value="s under the term electromagnetic mass." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12.0;fontColor=#000000;fontFamily=DejaVu Sans;opacity=100;fontStyle=0;" parent="8" vertex="1">
+      <mxGeometry x="55.57" y="327.27" width="241.78" height="14.40" as="geometry"/>
+    </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
