@@ -1,4 +1,4 @@
-from textlayout import word_wrap
+from svgtext.textlayout import word_wrap
 from tpipe import phtml
 import networkx as nx
 from networkx import MultiDiGraph

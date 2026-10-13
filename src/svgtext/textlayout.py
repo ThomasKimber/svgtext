@@ -214,7 +214,7 @@ class TextSpan(DrawComponent):
         x,y=self.pos
         fm_ascent, fm_descent = self.font.getmetrics()
         font_measure_width = self.font.getlength(self.text)
-        average_char_width = font_measure_width/len(self.text)
+        average_char_width = font_measure_width/(len(self.text)+1)
         # Adjust bounds based on style variations
         if self.is_bold or self.is_italic:
             font_measure_width=font_measure_width + (0.7 * average_char_width) # Naieve adjustment - needs better method

@@ -5,7 +5,7 @@ from math import log,sqrt
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from PIL import Image, ImageDraw, ImageFont
-import textlayout, htmltext
+from svgtext import textlayout, htmltext
 from fontTools import ttLib
 from pandas import DataFrame
 from itertools import starmap
@@ -315,6 +315,8 @@ class SVGDataGridLayout(SVGElement):
                 if c not in max_col_width.keys(): # i.e. it's the first loop around (r=0)
                     max_col_width[c]=0
                 data = "\n".join([str(frame.iloc[r,c])[slice(*ww)] for ww in textlayout.word_wrap(str(frame.iloc[r,c]),35, " ")])
+                if len(data)==0:
+                    data=" "
                 font=datafont
                 fontsize=datafontsize
                 linespace=1.0
