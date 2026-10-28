@@ -14,6 +14,8 @@ def html_to_markup(source : str,
     Text can be supplied as straight text, or provided as html
     """
     tgraph=html_text_to_graph(source)
+    if len(tgraph)==0:
+        return [[(" ",{})  ]]
     return [[(text,_get_text_feature_from_graph_hierarchy(tgraph, node)) for text, node in row ] for row in _html_text_word_wrap(source, tgraph, word_wrap_limit) ]
 
 

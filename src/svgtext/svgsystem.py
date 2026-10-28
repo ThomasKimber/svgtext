@@ -188,7 +188,9 @@ class SVGViewBox(SVGElement):
             "height" : height,
         }
         self.content = "%%placeholder%%"
-        
+
+
+
 class SVGStyle(SVGElement):
     def __init__(self, 
                  style_blocks : list[str],
@@ -198,6 +200,37 @@ class SVGStyle(SVGElement):
             "type" : "text/css"
         }
         self.content = "\n".join(style_blocks)
+
+
+
+class SVGVerticalComposite(SVGElement):
+    def __init__(self, 
+                 contents: list[SVGElement],
+                 padding : int, 
+                 **kwargs
+                 ):
+        self.element='g'
+        aligned_components=[]
+        y_val=0
+        bounds = [0,0,0,0]
+
+        for component_i in range(0, len(contents)):
+            transform=SVGTransformMatrix.to_location((padding,y_val))
+            print(y_val)
+            aligned_components.append(
+                str(transform).replace("%%placeholder%%",str(contents[component_i])))
+            y_val=y_val + contents[component_i].height + padding
+            tlx,tly,brx,bry=contents[component_i].bounds
+            bounds = [min(bounds[0], tlx),
+                      min(bounds[1], tly),
+                      max(bounds[2], contents[component_i].width + padding),
+                      max(bounds[3], y_val)]
+
+        self.content="".join(aligned_components)
+        self.bounds=bounds
+        self.attributes={**{
+                    "x" : 0, 
+                    "y" : 0     }, **kwarg_filter(kwargs, {"style_class"})}
 
 class SVGMultiLineText(SVGElement):
     def __init__(self, 
@@ -293,7 +326,6 @@ class SVGDataGridLayout(SVGElement):
                 linespace=1.0
                 cell_content = SVGMultiLineText(data, linespace, font, fontsize)
                 markup = htmltext.html_to_markup(data.replace("\n",""), 35)
-                print(markup)
                 cell_content = SVGMultiSpanText(markup, linespace, font, fontsize)
                 content_bounds = cell_content.bounds
                 bounds_width=content_bounds[2]-content_bounds[0]
@@ -322,7 +354,6 @@ class SVGDataGridLayout(SVGElement):
                 linespace=1.0
                 cell_content = SVGMultiLineText(data, linespace, font, fontsize)
                 markup = htmltext.html_to_markup(data.replace("\n",""), 35)
-                print(markup)
                 cell_content = SVGMultiSpanText(markup, linespace, font, fontsize)
                 content_bounds = cell_content.bounds
                 bounds_width=content_bounds[2]-content_bounds[0]

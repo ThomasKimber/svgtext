@@ -30,7 +30,6 @@ def word_wrap(text_block : str,
                 break
         if scores[e]==0:
             best=sorted([(k,v) for k,v in scores.items()], key=lambda x:x[1], reverse=True)[0][0]
-            #print(e, scores.values())
         else:
             best=len(text_block[last_cut:])
         
@@ -270,7 +269,7 @@ class TextSpan(DrawComponent):
         if 'fill' not in kwargs.keys():
             kwargs['fill']='black'
         x,y=self.pos
-        print(self.pos, self.bounds)
+        
         bounds=self._bounds()
         if 'highlight' in kwargs.keys():
             drawing_object.rectangle(
