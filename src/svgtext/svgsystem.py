@@ -9,6 +9,8 @@ from svgtext import textlayout, htmltext
 from fontTools import ttLib
 from pandas import DataFrame
 from itertools import starmap
+from importlib.resources import files
+from math import sin, cos, pi
 
 def encode_data_to_base64_uri(font_file_loc):
     with open(font_file_loc, "rb") as font_file:
@@ -22,12 +24,17 @@ Dimensions: TypeAlias = tuple[int, int]
 Margins: TypeAlias = tuple[int, int, int, int]
 
 def kwarg_filter(kwargs, keys):
-    subs = {"style_class" : "class"}
+    subs = {"style_class" : "class", 
+            "fill" : "fill", 
+            "stroke" : "stroke", 
+            "stroke_width" : "stroke-width"}
     return {subs.get(k,k):v for k,v in kwargs.items() if k in keys}
 
 class SVGFontRegistry:
 
-    def __init__(self, fonts : list[str]):
+    def __init__(self, fonts : list[str] | None = None):
+        if fonts is None:
+            fonts=[str(f) for f in files("svgtext.fonts").iterdir() if f.is_file and str(f).lower().endswith(".ttf")]
         self.fonts=fonts
         self.registry={}
         for f_path in fonts:
@@ -215,7 +222,7 @@ class SVGVerticalComposite(SVGElement):
         bounds = [0,0,0,0]
 
         for component_i in range(0, len(contents)):
-            transform=SVGTransformMatrix.to_location((padding,y_val))
+            transform=SVGTransformMatrix.to_location((0,y_val))
             print(y_val)
             aligned_components.append(
                 str(transform).replace("%%placeholder%%",str(contents[component_i])))
@@ -325,7 +332,8 @@ class SVGDataGridLayout(SVGElement):
                 fontsize=headerfontsize
                 linespace=1.0
                 cell_content = SVGMultiLineText(data, linespace, font, fontsize)
-                markup = htmltext.html_to_markup(data.replace("\n",""), 35)
+                markup = htmltext.html_to_markup(f"<b>{data}</b>".replace("\n",""), 35)
+                print(markup)
                 cell_content = SVGMultiSpanText(markup, linespace, font, fontsize)
                 content_bounds = cell_content.bounds
                 bounds_width=content_bounds[2]-content_bounds[0]
@@ -430,14 +438,67 @@ class SVGLine(SVGElement):
                  y2 : int, 
                  **kwargs):
         self.element="line"
-
+        
         self.attributes={**{
             "x1":x1, 
             "y1":y1,
             "x2":x2, 
-            "y2":y2}, **kwarg_filter(kwargs, {"style_class"})}
+            "y2":y2}, **kwarg_filter(kwargs, {"style_class", "stroke", "stroke_width"})}
+        self.bounds=[min(x1,x2),min(y1,y2),max(x1,x2),max(y1,y2)]
+        self.content=""
+
+class SVGCircle(SVGElement):
+    def __init__(self, 
+                 r : int, 
+                 cx : int, 
+                 cy : int,
+                 **kwargs):
+        self.element="circle"
+        self.bounds=[cx-r, cy-r, cx+r, cy+r]
+        self.attributes={**{
+            "r":r, 
+            "cx":cx+r,
+            "cy":cy+r}, **kwarg_filter(kwargs, {"style_class", "fill", "stroke", "stroke_width"})}
 
         self.content=""
+
+class SVGCircleWithSpokes(SVGElement):
+    def __init__(self, 
+                    r : int, 
+                    cx : int, 
+                    cy : int,
+                    spokes : int,
+                    spoke_radius : int=None, 
+                    rot_degrees : int=None,
+                    **kwargs):
+        self.element="g"
+        if spoke_radius is None:
+            spoke_radius=r
+        spoke_radius = min(r,spoke_radius)
+        if rot_degrees is None:
+            rot_degrees=0
+                    
+        circle = SVGCircle(r, cx, cy, **kwargs)
+        bounds=circle.bounds
+        spoke_lines = []
+        for spoke in range(0, spokes):
+            θ=(2*pi*spoke/spokes)-(pi/2)+(rot_degrees/180*pi)
+            spoke_svg=SVGLine(  cx+r, 
+                                cy+r, 
+                                (cx+r) + (spoke_radius * cos(θ)),
+                                (cy+r) + (spoke_radius * sin(θ)), 
+                                **kwargs)
+            spoke_lines.append(spoke_svg)
+            tlx,tly,brx,bry=spoke_svg.bounds
+            bounds = [min(bounds[0], tlx),
+                        min(bounds[1], tly),
+                        max(bounds[2], brx),
+                        max(bounds[3], bry)]
+        self.attributes={}
+
+        self.bounds=bounds
+        self.content=str(circle)+"".join([str(s) for s in spoke_lines])
+
 
 class SVGRectangle(SVGElement):
     def __init__(self, 
@@ -449,7 +510,7 @@ class SVGRectangle(SVGElement):
                  ry : float,
                  **kwargs):
         self.element="rect"
-
+        self.bounds=[x,y,x+width,y+height]
         self.attributes={**{
             "x":x, 
             "y":y,
@@ -457,9 +518,59 @@ class SVGRectangle(SVGElement):
             "height":height, 
             "rx":rx, 
             "ry":ry
-        }, **kwarg_filter(kwargs, {"style_class"})}
+        }, **kwarg_filter(kwargs, {"style_class", "fill", "stroke", "stroke_width"})}
 
         self.content=""
+
+
+class SVGRectangleWithSpokes(SVGElement):
+    def __init__(self, 
+                    x : int, 
+                    y : int, 
+                    width : int, 
+                    height : int, 
+                    spokes : int,
+                    spoke_radius : int,
+                    rot_degrees : int=None,
+                    **kwargs):
+        self.element="g"
+
+        if spoke_radius is None:
+            spoke_radius=sqrt(width/2)**2 + (height/2)**2
+        
+
+        if rot_degrees is None:
+            rot_degrees=0
+                    
+        rectangle = SVGRectangle(x,y,width,height, 0,0,**kwargs)
+        bounds=rectangle.bounds
+        spoke_lines = []
+        cx = x + (width/2)
+        cy = y + (height/2)
+        for spoke in range(0, spokes):
+            t=min(spoke_radius,sqrt(width/2)**2 + (height/2)**2)
+            θ=((2*pi*spoke/spokes)-(pi/2))+(rot_degrees/180*pi)
+
+            if cos (θ) > 0: t = min(t, (width/2) / cos (θ))
+            if cos (θ) < 0: t = min(t, (-width/2) / cos (θ))
+            if sin (θ) > 0: t = min(t, (height/2) / sin (θ))
+            if sin (θ) < 0: t = min(t, (-height/2) / sin (θ))
+            spoke_svg=SVGLine(cx, 
+                              cy, 
+                              cx + (t * cos(θ)),
+                              cy + (t * sin(θ)), 
+                            **kwargs)
+            spoke_lines.append(spoke_svg)
+            tlx,tly,brx,bry=spoke_svg.bounds
+            bounds = [min(bounds[0], tlx),
+                        min(bounds[1], tly),
+                        max(bounds[2], brx),
+                        max(bounds[3], bry)]
+        self.attributes={}
+
+        self.bounds=bounds
+        self.content=str(rectangle)+"".join([str(s) for s in spoke_lines])
+
 
 class SVGTitledPanelFromContent(SVGElement):
     """Defines a panel with a title-bar located at the top and contents provided by some SVGElement"""
@@ -480,7 +591,10 @@ class SVGTitledPanelFromContent(SVGElement):
         # There may be other generation methods where the panel dimensions are determined in 
         # a different way, with the content being resized/scaled to fit - that alternate form
         # of generation is not currently addressed here.
-        title_text_element = SVGMultiLineText(title_text, 1.0, title_font, title_font_size) # n.b. consider hover/title text and/or a-href information
+
+        #TODO: Consider replacing this with a SVGMultiSpanText enabling more control
+        title_text_markup = htmltext.html_to_markup(title_text, 65)
+        title_text_element = SVGMultiSpanText(title_text_markup,1.0, title_font, title_font_size) # n.b. consider hover/title text and/or a-href information
         f_ascent, f_descent=title_font.getImageFont(title_font_size).getmetrics()
         min_width=max([content_element.width+ sum([content_margins[0], content_margins[2]]), (title_text_element.width + sum([title_margins[0], title_margins[2]]))])
         min_height=content_element.height + title_text_element.height + sum([content_margins[1] , content_margins[3]]) + sum([title_margins[1], title_margins[3]])
@@ -498,7 +612,7 @@ class SVGTitledPanelFromContent(SVGElement):
         self.element="g"
 
         content_element_transform = SVGTransformMatrix.to_location((content_margins[0], title_text_element.height + content_margins[1]+ sum([title_margins[1], title_margins[3]])))
-        title_element_transform = SVGTransformMatrix.to_location((title_margins[0], f_ascent+title_margins[1]))
+        title_element_transform = SVGTransformMatrix.to_location((title_margins[0], title_margins[1]))
 
         self.content=str(panel_element) + str(title_element_transform).replace("%%placeholder%%",str(title_text_element)) + str(content_element_transform).replace("%%placeholder%%", str(content_element))
         
