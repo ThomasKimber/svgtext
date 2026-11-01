@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "svgtext"
 version = "0.1.0"
@@ -11,6 +15,9 @@ dependencies = [
     "pytest-playwright>=0.10.0",
     "tpipe",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/svgtext"]
 
 [tool.uv.sources]
 tpipe = { git = "https://github.com/ThomasKimber/tpipe.git" }
