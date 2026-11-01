@@ -310,10 +310,8 @@ class SVGDataGridLayout(SVGElement):
 
         self.attributes={}
         self.element="g"
-        if show_headers:
-            header_row_adj=1
-        else:
-            header_row_adj=0
+
+        header_row_adj=0
         self.row_count = len(frame)
         self.columns = frame.columns
         self.column_count = len(self.columns)
@@ -323,7 +321,7 @@ class SVGDataGridLayout(SVGElement):
         cells=[]
         if show_headers:
             r=0
-
+            header_row_adj=1
             for c in range(0,self.column_count):
                 if r not in max_row_height.keys():
                     max_row_height[r]=0
@@ -333,7 +331,7 @@ class SVGDataGridLayout(SVGElement):
                 font=headerfont
                 fontsize=headerfontsize
                 linespace=1.0
-                cell_content = SVGMultiLineText(data, linespace, font, fontsize)
+                #cell_content = SVGMultiLineText(data, linespace, font, fontsize)
                 markup = htmltext.html_to_markup(f"<b>{data}</b>".replace("\n",""), 35)
                 cell_content = SVGMultiSpanText(markup, linespace, font, fontsize)
                 content_bounds = cell_content.bounds
@@ -361,7 +359,7 @@ class SVGDataGridLayout(SVGElement):
                 font=datafont
                 fontsize=datafontsize
                 linespace=1.0
-                cell_content = SVGMultiLineText(data, linespace, font, fontsize)
+                #cell_content = SVGMultiLineText(data, linespace, font, fontsize)
                 markup = htmltext.html_to_markup(data.replace("\n",""), 35)
                 cell_content = SVGMultiSpanText(markup, linespace, font, fontsize)
                 content_bounds = cell_content.bounds
@@ -384,8 +382,8 @@ class SVGDataGridLayout(SVGElement):
         
         full_width = self.bounds[2]-self.bounds[0]
         full_height = self.bounds[3]-self.bounds[1]
-        row_padding = row_padding/full_width
-        column_padding = column_padding/full_height
+        row_padding = row_padding/full_height
+        column_padding = column_padding/full_width
 
         row_loc=0
         for r in range(0,self.row_count+header_row_adj):
