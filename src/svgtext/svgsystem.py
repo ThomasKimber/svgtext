@@ -453,7 +453,7 @@ class SVGCircle(SVGElement):
                  cy : int,
                  **kwargs):
         self.element="circle"
-        self.bounds=[cx-r, cy-r, cx+r, cy+r]
+        self.bounds=[cx, cy, cx+(2*r), cy+(2*r)] # Convert to bb location
         self.attributes={**{
             "r":r, 
             "cx":cx+r,
