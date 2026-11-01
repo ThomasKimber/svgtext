@@ -2,6 +2,35 @@ from typing import Hashable
 from playwright.async_api import async_playwright
 import asyncio, base64
 import re
+import base64
+
+def binary_data_to_base64_text(binary_data):
+    """Convert binary data to text data in Base64 format."""
+    return base64.b64encode(binary_data).decode('utf-8').replace('\n', '')
+
+
+def base64_text_to_data_url(base64_text, data_format):
+    """Convert data in form of base64 text to a data URL with suitable prefix."""
+    # Argument processing
+    if data_format == 'jpg':
+        data_format = 'jpeg'
+
+    # Transformation
+    # - MIME type
+    if data_format in ['jpeg', 'png', 'gif', 'webp']:
+        mime_type = 'image/' + data_format
+    elif data_format == 'svg':
+        mime_type = 'image/svg+xml'
+    elif data_format == 'pdf':
+        mime_type = 'application/pdf'
+    elif data_format in ['eps', 'ps']:
+        mime_type = 'application/postscript'
+    else:
+        msg = 'Unknown data format. Can not assign a suitable MIME type.'
+        raise ValueError(msg)
+    # - Data URL
+    data_url = 'data:{};base64,{}'.format(mime_type, base64_text)
+    return data_url
 
 async def batch_svg_to_png(svg_dict : dict)->dict:
 
