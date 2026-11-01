@@ -493,7 +493,6 @@ class SVGCircleWithSpokes(SVGElement):
                         min(bounds[1], tly),
                         max(bounds[2], brx),
                         max(bounds[3], bry)]
-            bounds=circle.bounds
         self.attributes={}
 
         self.bounds=bounds
