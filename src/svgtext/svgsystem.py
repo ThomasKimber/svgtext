@@ -226,7 +226,6 @@ class SVGVerticalComposite(SVGElement):
 
         for component_i in range(0, len(contents)):
             transform=SVGTransformMatrix.to_location((0,y_val))
-            print(y_val)
             aligned_components.append(
                 str(transform).replace("%%placeholder%%",str(contents[component_i])))
             y_val=y_val + contents[component_i].height + padding
@@ -336,7 +335,6 @@ class SVGDataGridLayout(SVGElement):
                 linespace=1.0
                 cell_content = SVGMultiLineText(data, linespace, font, fontsize)
                 markup = htmltext.html_to_markup(f"<b>{data}</b>".replace("\n",""), 35)
-                print(markup)
                 cell_content = SVGMultiSpanText(markup, linespace, font, fontsize)
                 content_bounds = cell_content.bounds
                 bounds_width=content_bounds[2]-content_bounds[0]
