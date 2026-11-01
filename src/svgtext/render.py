@@ -1,6 +1,23 @@
+from typing import Hashable
 from playwright.async_api import async_playwright
 import asyncio, base64
 import re
+
+async def batch_svg_to_png(svg_dict : dict)->dict:
+
+    async with async_playwright() as p:
+        browser = await p.chromium.launch()
+        sem = asyncio.Semaphore(8)
+        async def convert(key : Hashable, svg:str)->tuple[Hashable,bytes]:
+            async with sem:
+                png = await svg_to_png(browser, svg)
+                return key, png
+
+        results = await asyncio.gather(*(convert(k,s) for k,s in svg_dict.items()))
+        await browser.close()
+
+    return dict(results)
+        
 
 async def svg_to_png(browser: async_playwright, svg_text: str, scale : int=2) -> bytes:
     wm = re.search(r'width="([\d.]+)"', svg_text)
