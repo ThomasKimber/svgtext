@@ -42,11 +42,14 @@ class SVGFontRegistry:
                 font = ttLib.TTFont(f_path)
                 self.registry[str(font['name'].names[4])]=SVGFont(f_path, str(font['name'].names[4]))
 
-    def css_style(self)->str:
+    def css_style(self, include_fonts : list[str]=None)->str:
         # Emit style-formatted css code that encodes the fonts for wider use
         font_style=[]
         font_class_defs=[]
-        for font_name, style, font_class_def in [(n,f.css_font_style_string(), f.css_class_string()) for n,f in self.registry.items()]:
+        if include_fonts is None:
+            include_fonts=[]
+        for font_name, style, font_class_def in [(n,f.css_font_style_string(), f.css_class_string()) 
+                                                 for n,f in self.registry.items() if n in include_fonts]:
             font_style.append(style)
             font_class_defs.append(font_class_def)
         
