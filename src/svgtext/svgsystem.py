@@ -478,7 +478,8 @@ class SVGCircleWithSpokes(SVGElement):
             rot_degrees=0
                     
         circle = SVGCircle(r, cx, cy, **kwargs)
-        bounds=circle.bounds
+        #bounds=circle.bounds
+        bounds=[cx-r, cy-r, cx+r, cy+r]
         spoke_lines = []
         for spoke in range(0, spokes):
             θ=(2*pi*spoke/spokes)-(pi/2)+(rot_degrees/180*pi)
