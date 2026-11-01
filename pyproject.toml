@@ -18,6 +18,7 @@ dependencies = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/svgtext"]
+artifacts = ["src/svgtext/fonts/*"]
 
 [tool.uv.sources]
 tpipe = { git = "https://github.com/ThomasKimber/tpipe.git" }
