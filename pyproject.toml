@@ -21,4 +21,4 @@ packages = ["src/svgtext"]
 artifacts = ["src/svgtext/fonts/*"]
 
 [tool.uv.sources]
-tpipe = { git = "https://github.com/ThomasKimber/tpipe.git" }
+tpipe = { url = "https://github.com/ThomasKimber/tpipe/releases/download/v0.001/tpipe-0.1.0-py3-none-any.whl" }
