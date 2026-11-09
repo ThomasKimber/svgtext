@@ -46,12 +46,6 @@ class DrawComponent(ABC):
         bounding box that encompasses this object"""
         return NotImplemented
 
-    @abstractmethod
-    def _pillow_draw(self, drawing_object, **kwargs):
-        """Code to implement the visualisation of this object within
-        a pillow drawing_object's context"""
-        return NotImplemented
-
 class TextMultiSpan(DrawComponent):
     def __init__(self, 
                 pos : tuple[int, int],
@@ -96,24 +90,6 @@ class TextMultiSpan(DrawComponent):
         spans=[span._svg_stub(**kwargs) for span in self.text_spans]
         return "\n".join(spans)
 
-    
-    def _pillow_draw(self, drawing_object, **kwargs):
-            
-        if 'block' in kwargs.keys():
-            bounds=self._bounds()
-            drawing_object.rectangle(
-                [*bounds],
-                outline=kwargs['block'],
-                width=1,
-                fill=kwargs['block']
-            )
-
-        scale_x, scale_y = 100/self.width, 100/self.height
-        
-        for tl in self.text_lines:
-            tl._pillow_draw(drawing_object)
-
-
 
 class TextMultiLine(DrawComponent):
     """Accepts raw text, splits it based on \n characters and 
@@ -154,23 +130,6 @@ class TextMultiLine(DrawComponent):
         return "\n".join(spans)
 
     
-    def _pillow_draw(self, drawing_object, **kwargs):
-            
-        if 'block' in kwargs.keys():
-            bounds=self._bounds()
-            drawing_object.rectangle(
-                [*bounds],
-                outline=kwargs['block'],
-                width=1,
-                fill=kwargs['block']
-            )
-
-        scale_x, scale_y = 100/self.width, 100/self.height
-        
-        for tl in self.text_lines:
-            tl._pillow_draw(drawing_object)
-
-
 class TextSpan(DrawComponent):
     
     def __init__(self, 
@@ -263,32 +222,6 @@ class TextSpan(DrawComponent):
 
         return f"""{link_wrapper_open}<tspan x="{x}" y="{y}" {extra_styles}>{self.text}</tspan>{link_wrapper_close}"""
 
-    def _pillow_draw(self, drawing_object, **kwargs):
-        if 'anchor' not in kwargs.keys():
-            kwargs['anchor']='ls'
-        if 'fill' not in kwargs.keys():
-            kwargs['fill']='black'
-        x,y=self.pos
-        
-        bounds=self._bounds()
-        if 'highlight' in kwargs.keys():
-            drawing_object.rectangle(
-                [*bounds],
-                outline=kwargs['highlight'],
-                width=1,
-                fill=kwargs['highlight']
-            )
-        if 'baseline' in kwargs.keys():
-            drawing_object.line([x, y,bounds[2], y],
-                 fill=kwargs['baseline'], width=5)
-        
-        drawing_object.text((x,y), 
-                            self.text, 
-                            font=self.font, 
-                            fill=kwargs['fill'], 
-                            anchor=kwargs['anchor'])
-
-
 class LayoutFrame(DrawComponent):
 
     def __init__(self, 
@@ -315,22 +248,3 @@ class LayoutFrame(DrawComponent):
         
     def _bounds(self):
         return (self.padding, self.padding, self.width, self.height)
-    
-    def _pillow_draw(self, drawing_object, **kwargs):
-        # Draw padding rectangle
-        drawing_object.rectangle(
-            [0, 0, self.width+(2*self.padding), self.height+(2*self.padding)],
-            outline="red",
-            width=1,
-        )
-        #Draw horizontal gridlines
-        for i in range(0,self.y_gridsize+1):
-            y = i*self.cell_height
-            drawing_object.text((self.padding, y+self.padding), str(y), font=self.font, fill=self.text_color, anchor='rm')
-            drawing_object.line([(self.padding, y+self.padding), (self.padding + self.width, y+self.padding)], fill=self.axis_color, width=2)
-            
-        
-        for i in range(0,self.x_gridsize+1):
-            x = i*self.cell_width
-            drawing_object.line([(x+self.padding, self.padding), (x+self.padding, self.padding+self.height)], fill=self.axis_color, width=2)
-            drawing_object.text((x+self.padding, self.padding), str(x), font=self.font, fill=self.text_color, anchor='ms')

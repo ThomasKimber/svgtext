@@ -101,6 +101,7 @@ class SVGElement:
     element:str
     attributes: dict
     content : str
+    bounds : tuple[float, float, float, float]
 
     def __init__(self, 
                  element : str, 
@@ -222,7 +223,7 @@ class SVGVerticalComposite(SVGElement):
         self.element='g'
         aligned_components=[]
         y_val=0
-        bounds = [0,0,0,0]
+        bounds = [0.0,0.0,0.0,0.0]
 
         for component_i in range(0, len(contents)):
             transform=SVGTransformMatrix.to_location((0,y_val))
@@ -236,7 +237,35 @@ class SVGVerticalComposite(SVGElement):
                       max(bounds[3], y_val)]
 
         self.content="".join(aligned_components)
-        self.bounds=bounds
+        self.bounds=tuple(bounds)
+        self.attributes={**{
+                    "x" : 0, 
+                    "y" : 0     }, **kwarg_filter(kwargs, {"style_class"})}
+        
+class SVGHorizontalComposite(SVGElement):
+    def __init__(self, 
+                 contents: list[SVGElement],
+                 padding : int, 
+                 **kwargs
+                 ):
+        self.element='g'
+        aligned_components=[]
+        x_val=0.0
+        bounds = [0,0,0,0]
+
+        for component_i in range(0, len(contents)):
+            transform=SVGTransformMatrix.to_location((x_val,0))
+            aligned_components.append(
+                str(transform).replace("%%placeholder%%",str(contents[component_i])))
+            x_val=x_val + contents[component_i].width + padding
+            tlx,tly,brx,bry=contents[component_i].bounds
+            bounds = [min(bounds[0], tlx),
+                      min(bounds[1], tly),
+                      max(bounds[2], x_val),
+                      max(bounds[3], contents[component_i].height + padding)]
+
+        self.content="".join(aligned_components)
+        self.bounds=tuple([float(b) for b in bounds])
         self.attributes={**{
                     "x" : 0, 
                     "y" : 0     }, **kwarg_filter(kwargs, {"style_class"})}
@@ -246,7 +275,7 @@ class SVGMultiLineText(SVGElement):
                  text : str, 
                  linespace : float,
                  font : SVGFont,
-                 fontsize : int,
+                 fontsize : float,
                  **kwargs):
         self.element='text'
         self.attributes={**
@@ -272,7 +301,7 @@ class SVGMultiSpanText(SVGElement):
                  span_markup : list[list[tuple[str,dict[dict]]]],
                  linespace : float,
                  font : SVGFont,
-                 fontsize : int,
+                 fontsize : float,
                  **kwargs):
         self.element='text'
         self.attributes={**
@@ -303,10 +332,10 @@ class SVGDataGridLayout(SVGElement):
                  column_parameters : dict,
                  show_headers: bool,
                  headerfont: SVGFont, 
-                 headerfontsize: int, 
+                 headerfontsize: float, 
                  datafont : SVGFont, 
-                 datafontsize : int,
-                 row_column_padding : tuple[int, int]):
+                 datafontsize : float,
+                 row_column_padding : tuple[float, float]):
 
         self.attributes={}
         self.element="g"
