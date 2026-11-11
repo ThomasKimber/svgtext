@@ -1,8 +1,9 @@
 from typing import Hashable
-from playwright.async_api import async_playwright
-import asyncio, base64
-import re
+import tempfile, os, io, functools
 import base64
+import re
+from resvg_py import svg_to_bytes
+from fontTools.ttLib import TTFont
 
 def binary_data_to_base64_text(binary_data):
     """Convert binary data to text data in Base64 format."""
@@ -32,36 +33,64 @@ def base64_text_to_data_url(base64_text, data_format):
     data_url = 'data:{};base64,{}'.format(mime_type, base64_text)
     return data_url
 
-async def batch_svg_to_png(svg_dict : dict)->dict:
 
-    async with async_playwright() as p:
-        browser = await p.chromium.launch()
-        sem = asyncio.Semaphore(8)
-        async def convert(key : Hashable, svg:str)->tuple[Hashable,bytes]:
-            async with sem:
-                png = await svg_to_png(browser, svg)
-                return key, png
+@functools.lru_cache(maxsize=8)
+def _prepare_fonts(svg: str) -> tuple[str, ...]:
+    fonts = [
+        base64.b64decode(m)
+        for m in re.findall(r'data:application/x-font-ttf;base64,([A-Za-z0-9+/=]+)', svg)
+    ]
+    tmp_dir = tempfile.mkdtemp(prefix="resvg_fonts_")
+    paths = []
+    print(len(fonts))
+    for i, f in enumerate(fonts):
+        path = os.path.join(tmp_dir, f"font_{i}.ttf")
+        with open(path, "wb") as fh:
+            fh.write(f)
+        paths.append(path)
+    return tuple(paths)
 
-        results = await asyncio.gather(*(convert(k,s) for k,s in svg_dict.items()))
-        await browser.close()
+def render_svg(svg: str, width: int = 2048) -> bytes:
+    font_paths = _prepare_fonts(svg)
+    print(font_paths)
+    return svg_to_bytes(
+        svg_string=svg,
+        font_files=list(font_paths),
+        skip_system_fonts=True,
+        width=width,
+    )
 
-    return dict(results)
-        
+def svg_to_png_data_uri(svg : str)->str:
+    _psvg, _pfonts=prepare_for_resvg(svg)
+    return base64_text_to_data_url(binary_data_to_base64_text(render_svg(_psvg)),
+                            data_format='png')
 
-async def svg_to_png(browser: async_playwright, svg_text: str, scale : int=2) -> bytes:
-    wm = re.search(r'width="([\d.]+)"', svg_text)
-    hm = re.search(r'height="([\d.]+)"', svg_text)
-    w = int(float(wm.group(1)))
-    h = int(float(hm.group(1)))
+def get_internal_family(font_bytes: bytes) -> str:
+    font = TTFont(io.BytesIO(font_bytes))
+    for record in font['name'].names:
+        if record.nameID == 1 and record.platformID == 3:  # Windows platform
+            return record.toUnicode()
+    return ""
 
-    page = await browser.new_page(viewport={"width": w, "height": h},
-                                  device_scale_factor=scale)
-    try:
-        await page.set_content(
-            f'<body style="margin:0">{svg_text}</body>',
-            wait_until="load"
-        )
-        await page.evaluate("document.fonts.ready")
-        return await page.locator("svg").screenshot(type="png")
-    finally:
-        await page.close()
+def prepare_for_resvg(svg: str) -> tuple[str, list[bytes]]:
+    font_matches = list(re.finditer(
+        r'@font-face\s*{[^}]*font-family\s*:\s*["\']([^"\']+)["\'][^}]*data:[^;]+;base64,([A-Za-z0-9+/=]+)',
+        svg
+    ))
+    
+    fonts = []
+    replacements = {}
+    
+    for m in font_matches:
+        declared_name = m.group(1)
+        font_bytes = base64.b64decode(m.group(2))
+        internal_name = get_internal_family(font_bytes)
+        fonts.append(font_bytes)
+        if declared_name != internal_name:
+            replacements[declared_name] = internal_name
+    
+    # Global replace — catches attributes, CSS rules, AND inline styles
+    for declared, internal in replacements.items():
+        svg = svg.replace(declared, internal)
+    
+    return svg, fonts
